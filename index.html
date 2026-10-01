@@ -1,0 +1,55 @@
+from pathlib import Path
+import zipfile
+
+out = Path("/mnt/data/muhin_qr_surprise_demo")
+out.mkdir(parents=True, exist_ok=True)
+
+html = '''<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>মুহিন টেলিকম QR Surprise</title>
+<style>
+body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;
+font-family:Arial,"Noto Sans Bengali",sans-serif;background:linear-gradient(135deg,#fff4df,#f3e8ff,#e6f7ff)}
+.card{max-width:520px;width:100%;padding:30px 22px;text-align:center;background:#fff;border-radius:28px;box-shadow:0 15px 50px #0002}
+.badge{display:inline-block;background:#111;color:#fff;padding:7px 13px;border-radius:30px;font-size:13px}
+h1{font-size:28px;margin:18px 0 10px}.msg{font-size:18px;line-height:1.7}
+.photo{display:none;width:155px;height:155px;object-fit:cover;border-radius:50%;margin:20px auto;border:6px solid white;box-shadow:0 8px 25px #0003}
+.links{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px}
+.links a{background:#111;color:#fff;text-decoration:none;padding:11px 16px;border-radius:13px}
+small{display:block;margin-top:25px;color:#777}
+</style>
+</head>
+<body>
+<main class="card">
+<span class="badge">মুহিন টেলিকম • QR Surprise</span>
+<h1 id="title">আপনার জন্য একটি বিশেষ চমক 💝</h1>
+<img id="photo" class="photo" alt="Gift photo">
+<div id="message" class="msg">এই ছোট্ট উপহারটি আপনার প্রিয় মানুষের জন্য ভালোবাসা দিয়ে তৈরি করা হয়েছে। ❤️</div>
+<div id="links" class="links"></div>
+<small>Powered by মুহিন টেলিকম এন্ড কম্পিউটার</small>
+</main>
+<script>
+const p=new URLSearchParams(location.search);
+const name=p.get("name")||"প্রিয় মানুষ";
+const message=p.get("message")||"এই ছোট্ট উপহারটি আপনার প্রিয় মানুষের জন্য ভালোবাসা দিয়ে তৈরি করা হয়েছে। ❤️";
+const photo=p.get("photo")||"";
+document.getElementById("title").textContent=name+" — আপনার জন্য একটি বিশেষ চমক 💝";
+document.getElementById("message").textContent=message;
+if(photo){let i=document.getElementById("photo");i.src=photo;i.style.display="block";}
+const items=[["Facebook","facebook"],["Instagram","instagram"],["TikTok","tiktok"],["WhatsApp","whatsapp"],["YouTube","youtube"]];
+items.forEach(([label,key])=>{const u=p.get(key);if(u){let a=document.createElement("a");a.href=u;a.target="_blank";a.rel="noopener";a.textContent=label;document.getElementById("links").appendChild(a);}});
+</script>
+</body>
+</html>'''
+
+html_path = out/"index.html"
+html_path.write_text(html, encoding="utf-8")
+
+zip_path = Path("/mnt/data/muhin_qr_surprise_demo.zip")
+with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED) as z:
+    z.write(html_path, "index.html")
+
+print(zip_path)
